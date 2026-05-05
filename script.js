@@ -1,3 +1,32 @@
+// Page intro / preloader
+const pageIntro = document.getElementById('page-intro');
+if (pageIntro) {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hold = reduceMotion ? 200 : 1500;
+
+  let dismissed = false;
+  const dismissIntro = () => {
+    if (dismissed) return;
+    dismissed = true;
+    pageIntro.classList.add('is-done');
+    document.body.classList.remove('is-loading');
+    pageIntro.addEventListener('transitionend', () => pageIntro.remove(), { once: true });
+    // Safety: ensure removal even if transitionend doesn't fire
+    window.setTimeout(() => pageIntro.remove(), 1200);
+  };
+
+  const start = () => window.setTimeout(dismissIntro, hold);
+
+  if (document.readyState === 'complete') {
+    start();
+  } else {
+    window.addEventListener('load', start, { once: true });
+  }
+
+  // Hard fallback: dismiss after 4s no matter what
+  window.setTimeout(dismissIntro, 4000);
+}
+
 // Mobile nav toggle
 const toggle = document.querySelector('.nav-toggle');
 const mobileNav = document.getElementById('mobile-nav');
